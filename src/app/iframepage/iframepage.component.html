@@ -1,1 +1,7 @@
-<p>iframepage works!</p>
+<div class="chess-container">
+    <ngx-chess-board
+      #chessBoard
+      (moveChange)="onMoveChange($event)">
+    </ngx-chess-board>
+  </div>
+  
