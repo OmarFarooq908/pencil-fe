@@ -14,6 +14,7 @@ export class IframepageComponent implements AfterViewInit {
   @ViewChild('chessBoard', { static: false }) chessBoard!: NgxChessBoardView;
   iframeId: 'iframe1' | 'iframe2' = 'iframe1';
   isDisabled: boolean = false;
+
   // Flag to ignore moveChange events triggered by programmatic updates.
   private isUpdatingBoard: boolean = false;
   constructor(
@@ -22,36 +23,30 @@ export class IframepageComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef
   ) {
 
-    console.log(" PlatformId: ", this.platformId);
-    //console.log(" window.location.hash: ", window.location.hash);
+
+    
     if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined' && window.location.hash) {
-      console.log("Window location hash:", window.location.hash);
+  
       this.iframeId = window.location.hash.includes('1') ? 'iframe1' : 'iframe2';
     }
     // Set initial disabled state: disable if this iframe is for black (iframe2)
     this.isDisabled = (this.iframeId === 'iframe2');
-    console.log("Iframe initialized with id:", this.iframeId);
+
   }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('message', this.receiveMessage.bind(this));
-      // Force the board to initialize properly
-      setTimeout(() => {
-        this.chessBoard.reset();
-        
-        // For frame2 (black), reverse the board's internal logic
-        if (this.iframeId === 'iframe2') {
-          // Delay reverse() slightly to ensure the board is rendered
-        setTimeout(() => {
-          this.chessBoard.reverse();
-          this.cdr.detectChanges();
-          console.log("Reverse() applied on iframe2");
-        }, 100);
-        }
-        this.cdr.detectChanges();
-      }, 0);
+      
       const gameState = localStorage.getItem('gameState');
+  
+      if (this.iframeId === 'iframe2'){
+        this.chessBoard.reverse();
+        this.cdr.detectChanges();
+    
+    
+    
+      }
       if (gameState) {
         const state = JSON.parse(gameState);
         if (state.fen) {
@@ -59,13 +54,39 @@ export class IframepageComponent implements AfterViewInit {
           this.ngZone.runOutsideAngular(() => {
             setTimeout(() => {
               this.chessBoard.setFEN(state.fen);
+              
+              // Update isDisabled based on the saved current turn.
+              if (this.iframeId === 'iframe1') {
+                this.isDisabled = state.currentTurn !== 'white';
+            
+            
+            
+            
+            
+              } else if (this.iframeId === 'iframe2') {
+                this.isDisabled = state.currentTurn !== 'black';
+                
+              }
+              if (this.iframeId === 'iframe2'){
+                this.chessBoard.reverse();
+                this.cdr.detectChanges();
+            
+            
+            
+              }
               // Now re-enter Angular zone and run change detection
               this.ngZone.run(() => {
-                this.cdr.detectChanges();
+              this.cdr.detectChanges();
               });
-            }, 0);
+            }, 500);
           });
         }
+      } else {
+          // Force the board to initialize properly
+        setTimeout(() => {
+          // this.chessBoard.reset();
+          this.initializeComponent();
+        }, 500);
       }
     }
   }
@@ -73,27 +94,27 @@ export class IframepageComponent implements AfterViewInit {
   onMoveChange(move: any): void {
     // If we're in the middle of a programmatic update, ignore this event.
     if (this.isUpdatingBoard) {
-      console.log(`Iframe ${this.iframeId}: Ignoring moveChange during programmatic update`);
+  
       return;
     }
     // If this board is disabled, ignore move events
     if (this.isDisabled) {
-      console.log(`Iframe ${this.iframeId} is disabled. Ignoring move.`);
+  
       return;
     }
-    console.log(" >> onMoveChange ran >> ", this.platformId)
+
     if (isPlatformBrowser(this.platformId)) {
       const moveString = `${move.from}${move.to}`;
       const message = { ...move, from: this.iframeId };
       window.parent.postMessage(message, '*');
-      console.log(" >> noMoveChange isPlatformBrowser ran >> ", moveString);
-      console.log(" >> The move object >> ", move);
+  
+  
     }
   }
 
   receiveMessage(event: MessageEvent): void {
-    console.log("ReceiveMessage ran >> ", event.data)
-    console.log("ReceveMessage frameId >> ", this.iframeId);
+
+
 
     if (event.data && event.data.type == 'turnUpdate') {
       // Set isDisabled based on whose turn it is
@@ -104,20 +125,46 @@ export class IframepageComponent implements AfterViewInit {
       } else if (this.iframeId == 'iframe2') {
         this.isDisabled = event.data.currentTurn !== 'black';
       }
-      console.log(`Iframe ${this.iframeId} is now ${this.isDisabled ? 'disabled' : 'enabled'}`);
+  
       this.cdr.detectChanges();
       return;
     }
+
+    // Handle resetGame message.
+    if (event.data && event.data.type === 'resetGame'){
+  
+      // this.chessBoard.reset();
+      this.initializeComponent();
+      // Optionally reset any local state.
+      return;
+    }
+    // Process move messages that did not originate from this iframe.
     if (event.data && event.data.move && event.data.from !== this.iframeId) {
       // Set flag to ignore subsequent moveChange events triggered by programmatic update.
       this.isUpdatingBoard = true;
-      console.log(`Iframe ${this.iframeId} applying move:`, event.data.move);
+  
       this.chessBoard.move(event.data.move);
       // Delay resetting the flag until after change detection
       setTimeout(() => {
         this.isUpdatingBoard = false;
       }, 100);
-      console.log("Move applied:", event.data.move);
+  
     }
+  }
+  initializeComponent(): void{
+    // Reset any local state variables to defaults.
+    // set isDisabled based on iframe's identity:
+    this.isDisabled = (this.iframeId === 'iframe2');
+
+    // Reset the chess board to the starting position.
+    this.chessBoard.reset();
+
+    if (this.iframeId === 'iframe2') {
+      this.chessBoard.reverse();
+    }
+
+    this.cdr.detectChanges();
+
+
   }
 }

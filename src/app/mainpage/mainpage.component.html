@@ -1,4 +1,11 @@
 <div class="frames-container">
-  <iframe id="iframe1" src="/iframepage#1"></iframe>
-  <iframe id="iframe2" src="/iframepage#2"></iframe>
+  <div class="frame-wrapper">
+    <h2>Player 1</h2>
+    <iframe id="iframe1" src="/iframepage#1"></iframe>
+  </div>
+  <div class="frame-wrapper">
+    <h2>Player 2</h2>
+    <iframe id="iframe2" src="/iframepage#2"></iframe>
+  </div>
+  <button (click)="resetGame()" class="reset-button">Create new game.</button>
 </div>

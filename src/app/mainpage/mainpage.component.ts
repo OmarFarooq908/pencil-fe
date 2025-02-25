@@ -22,7 +22,7 @@ export class MainpageComponent implements OnInit {
       const turnMessage = { type: 'turnUpdate', currentTurn: this.currentTurn};
       const iframe1 = document.getElementById('iframe1') as HTMLIFrameElement;
       const iframe2 = document.getElementById('iframe2') as HTMLIFrameElement;
-      console.log("Broadcasting initial turn update:", turnMessage);
+      
       if (iframe1 && iframe1.contentWindow) {
         iframe1.contentWindow.postMessage(turnMessage, '*');
       }
@@ -36,32 +36,42 @@ export class MainpageComponent implements OnInit {
 
     // Ignore turnUpdate messages in this handler.
     if (data && data.type === 'turnUpdate') {
-      console.log("Parent received a turnUpdate message; ignoring:", data);
+      
       return;
     }
 
+    if (data && data.type === 'resetGame'){
+      return;
+    }
+
+    // Check for checkmate: if the move indicates checkmate, alert the user and reset the game.
+    if (data && data.checkmate) {
+      alert(`Checkmate! ${data.color.toUpperCase()} wins! Click OK to reset the game.`);
+      this.resetGame();
+      return;
+    }
     // Process only original move messages (not forwarded ones).
     if (data && data.move && !data.forwarded) {
       // Toggle turn or perform other logic here
-      console.log("Parent received original move from", data.from, "with move:", data.move);
-      console.log("Current turn BEFORE toggle:", this.currentTurn);
+      
+      
     
       this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
 
-      console.log("Current turn AFTER toggle:", this.currentTurn);
+      
 
       // Broadcast the new turn to both iframes
       const turnMessage = { type: 'turnUpdate', currentTurn: this.currentTurn};
       const iframe1 = document.getElementById('iframe1') as HTMLIFrameElement;
       const iframe2 = document.getElementById('iframe2') as HTMLIFrameElement;
-      console.log("Turn Message: ", turnMessage);
+      
       if (iframe1 && iframe1.contentWindow) {
         iframe1.contentWindow.postMessage(turnMessage, '*');
-        console.log("Sent turn update to iframe1:", turnMessage);
+        
       }
       if (iframe2 && iframe2.contentWindow) {
         iframe2.contentWindow.postMessage(turnMessage, '*');
-        console.log("Sent turn update to iframe2:", turnMessage);
+        
       }
 
       // Mark this message as forwarded so it is not processed again
@@ -70,19 +80,38 @@ export class MainpageComponent implements OnInit {
       // Forward move logic here, for example:
       const targetIframeId = data.from === 'iframe1' ? 'iframe2' : 'iframe1';
       
-      console.log("This is the target frame ID >> ", targetIframeId);
+      
       const targetIframe = document.getElementById(targetIframeId) as HTMLIFrameElement;
-      console.log(" >> This is the target frame name >> ", targetIframe)
-      console.log(" >> This is the move >> ", data.move)
+      
+      
       if (targetIframe && targetIframe.contentWindow) {
         targetIframe.contentWindow.postMessage(data, '*');
-        console.log("Forwarded move to ", targetIframeId);
+        
       }
       // Save state if needed.
       localStorage.setItem('gameState', JSON.stringify({
-        fen: 'current_FEN_string',  // update with your actual FEN state
+        fen: data.fen,  // use the FEN value from the move event
         currentTurn: this.currentTurn
       }));
     }
+  }
+
+  // New method: resetGame()
+  // This method broadcasts a reset message to both iframes and resets any parent state
+  resetGame(): void {
+    const resetMessage = { type: 'resetGame' };
+    const iframe1 = document.getElementById('iframe1') as HTMLIFrameElement;
+    const iframe2 = document.getElementById('iframe2') as HTMLIFrameElement;
+    if (iframe1 && iframe1.contentWindow) {
+      iframe1.contentWindow.postMessage(resetMessage, '*');
+      
+    }
+    if (iframe2 && iframe2.contentWindow) {
+      iframe2.contentWindow.postMessage(resetMessage, '*');
+      
+    }
+    // Optionally reset the parent's game state.
+    this.currentTurn = 'white';
+    localStorage.removeItem('gameState');
   }
 }
