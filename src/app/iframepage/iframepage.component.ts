@@ -39,6 +39,16 @@ export class IframepageComponent implements AfterViewInit {
       // Force the board to initialize properly
       setTimeout(() => {
         this.chessBoard.reset();
+        
+        // For frame2 (black), reverse the board's internal logic
+        if (this.iframeId === 'iframe2') {
+          // Delay reverse() slightly to ensure the board is rendered
+        setTimeout(() => {
+          this.chessBoard.reverse();
+          this.cdr.detectChanges();
+          console.log("Reverse() applied on iframe2");
+        }, 100);
+        }
         this.cdr.detectChanges();
       }, 0);
       const gameState = localStorage.getItem('gameState');

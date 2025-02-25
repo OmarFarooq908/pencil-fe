@@ -1,0 +1,15 @@
+.frames-container {
+    width: 100%;  /* or 90% or any percentage you prefer */
+    max-width: 1200px; /* sets an upper limit */
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+  }
+  
+  
+  .frames-container iframe {
+    width: 48%;
+    height: 600px;
+    border: 1px solid #ccc;
+  }
+  

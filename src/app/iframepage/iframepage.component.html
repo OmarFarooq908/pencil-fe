@@ -1,8 +1,9 @@
 <div class="chess-container">
-    <ngx-chess-board
-      #chessBoard
-      (moveChange)="onMoveChange($event)"
-      [dragDisabled]="isDisabled">
-    </ngx-chess-board>
-    <div *ngIf="isDisabled" class="overlay"></div>
-  </div>
+  <ngx-chess-board
+    #chessBoard
+    (moveChange)="onMoveChange($event)"
+    [dragDisabled]="isDisabled"
+    [ngClass]="{'rotate-board': iframeId === 'iframe2'}">
+  </ngx-chess-board>
+  <div *ngIf="isDisabled" class="overlay"></div>
+</div>

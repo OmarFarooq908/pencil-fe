@@ -1,10 +1,12 @@
 /* Basic styles for the root component */
 .app-container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 1rem;
-    font-family: Arial, sans-serif;
-  }
+  width: 100%;
+  max-width: 1200px;  /* maximum width of 1200px */
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+}
+
   
   header {
     text-align: center;

@@ -12,4 +12,19 @@
     z-index: 9999;  /* very high z-index to ensure it's on top */
     pointer-events: auto; /* ensures the overlay captures clicks */
   }
+  /* Rotate the entire board container when in frame2 */
+.rotate-board {
+    transform: rotate(0deg);
+  }
+  
+  /* Counter-rotate the pieces so they appear upright */
+  .rotate-board .piece {
+    transform: rotate(0deg);
+  }
+  
+  /* If the chess board library uses different selectors for the pieces,
+     adjust the selector accordingly. For example, it might be something like: */
+  .rotate-board .chess-piece {
+    transform: rotate(0deg);
+  }
   
