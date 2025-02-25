@@ -1,7 +1,8 @@
 <div class="chess-container">
     <ngx-chess-board
       #chessBoard
-      (moveChange)="onMoveChange($event)">
+      (moveChange)="onMoveChange($event)"
+      [dragDisabled]="isDisabled">
     </ngx-chess-board>
+    <div *ngIf="isDisabled" class="overlay"></div>
   </div>
-  

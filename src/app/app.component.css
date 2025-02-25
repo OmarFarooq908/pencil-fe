@@ -1,0 +1,13 @@
+/* Basic styles for the root component */
+.app-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: Arial, sans-serif;
+  }
+  
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
