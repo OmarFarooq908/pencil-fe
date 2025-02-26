@@ -2,6 +2,7 @@
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    pointer-events: all !important; /* Force it to capture all pointer events */
   }
   
   .online-game-container button {
@@ -16,3 +17,26 @@
     width: 200px;
     margin: 10px;
   }  
+
+  .chess-container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(200, 200, 200, 0.5); /* Semi-transparent gray */
+  z-index: 9999; /* Ensure overlay is on top */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all !important; /* Force it to capture all pointer events */
+}
+
+.overlay-text {
+  font-size: 1.5rem;
+  color: #333;
+}

@@ -3,6 +3,7 @@ export const environment = {
     firebaseConfig: {
       apiKey: "AIzaSyAlAaV_r95KnLFtWQ_2RfyU9TNt1qH5lJA",
       authDomain: "pencil-fe-test-project.firebaseapp.com",
+      databaseURL: "https://pencil-fe-test-project-default-rtdb.firebaseio.com",  // Added databaseURL
       projectId: "pencil-fe-test-project",
       storageBucket: "pencil-fe-test-project.firebasestorage.app",
       messagingSenderId: "319893715428",

@@ -35,6 +35,12 @@ export class IframepageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (this.chessBoard) {
+      console.log('Chess board is available in ngAfterViewInit.');
+    } else {
+      console.warn('Chess board is NOT available in ngAfterViewInit.');
+    }
+    
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('message', this.receiveMessage.bind(this));
       

@@ -1,20 +1,34 @@
 <div class="online-game-container">
     <div *ngIf="!gameStarted">
-        <button (click)="createGame()">Create New Game</button>
-        <br />
-        <input type="text" #joinCode placeholder="Enter game code to join" />
-        <button (click)="joinGame(joinCode.value)">Join Game</button>
+      <button (click)="createGame()">Create New Game</button>
+      <br/>
+      <input type="text" #joinCode placeholder="Enter game code to join" />
+      <button (click)="joinGame(joinCode.value)">Join Game</button>
     </div>
+  
     <div *ngIf="gameStarted">
-        <h2>Game Code: {{ gameCode }}</h2>
-        <h3>You are playing as: {{ playerColor | titlecase }}</h3>
-        <h3 *ngIf="isMyTurn; else opponentTurn">Your turn</h3>
-        <ng-template #opponentTurn>
-            <h3>Opponent's turn</h3>
-        </ng-template>
-
-        <ngx-chess-board #chessBoard (moveChange)="onMoveChange($event)"></ngx-chess-board>
-        <br />
-        <button (click)="resetGame()">Reset Game</button>
+      <h2>Game Code: {{ gameCode }}</h2>
+      <h3>You are playing as: {{ playerColor | titlecase }}</h3>
+      <h3 *ngIf="isMyTurn; else opponentTurn">Your turn</h3>
+      <ng-template #opponentTurn>
+        <h3>Opponent's turn</h3>
+      </ng-template>
+  
+      <div class="chess-container">
+        <ngx-chess-board
+          #chessBoard
+          (moveChange)="onMoveChange($event)">
+        </ngx-chess-board>
+        <!-- Overlay is displayed when it's not your turn -->
+        <div *ngIf="!isMyTurn" class="overlay">
+          <p class="overlay-text">Waiting for opponent...</p>
+        </div>
+      </div>
+      
+  
+      <br/>
+      <button (click)="resetGame()">Reset Game</button>
+      <button (click)="leaveGame()">Leave Game</button>
     </div>
-</div>
+  </div>
+  
