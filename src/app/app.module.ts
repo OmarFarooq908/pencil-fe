@@ -4,6 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgxChessBoardModule } from 'ngx-chess-board';
 
+// Importing AngularFire modules
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { MainpageComponent } from './mainpage/mainpage.component';
 import { IframepageComponent } from './iframepage/iframepage.component';
@@ -18,7 +23,9 @@ import { routes } from './app.routes';
   imports: [
     BrowserModule,
     NgxChessBoardModule.forRoot(), // <-- Import the chess board module here
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireDatabaseModule // <-- Database module
   ],
   // Adding CUSTOM_ELEMENTS_SCHEMA can help if Angular still complains about unknown elements.
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
