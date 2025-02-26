@@ -190,6 +190,12 @@ ng serve
    - An overlay displays "Waiting for opponent..." on the inactive board.
    - Debug logs in the console will show the current turn, playerColor, and move events.
 
+---
+
+## Demo
+[Demo video](https://www.loom.com/share/089715eae50340a1a1e5d0f253fd9403?sid=8aadc7c8-ee8e-49c4-8a66-adeee953bbd2).
+
+---
 
 ## Contributing
 
