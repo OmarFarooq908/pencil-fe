@@ -1,11 +1,11 @@
 # Pencil FE Assignment
 
-![Angular](https://img.shields.io/badge/Angular-16-red)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
+[![Angular 16](https://img.shields.io/badge/Angular-16-red)](https://angular.io/) [![Firebase](https://img.shields.io/badge/Firebase-Realtime%20Database-blue)](https://firebase.google.com/) [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-Pencil FE Assignment is a feature-rich Angular 16 application that simulates a chess match using two iframes—each representing one player. One iframe is dedicated to the white player and the other to the black player. The application leverages the [ngx-chess-board](https://www.npmjs.com/package/ngx-chess-board) library (v2.2.3) and uses the postMessage API for real-time communication between the iframes through a parent window. The project persists game state using LocalStorage and includes checkmate detection with a game reset functionality.
+Pencil FE Assignment is a feature-rich Angular 16 application that simulates a chess match in two modes:
 
-> **Note:** The online game functionality is not yet implemented.
+- **Offline Mode:** Two iframes—each representing one player (white and black)—communicate via the `postMessage` API. The game uses the [ngx-chess-board](https://www.npmjs.com/package/ngx-chess-board) library with real-time move replication, turn-based control, and local storage persistence.
+- **Online Mode (Bonus Feature):** A single-board online game powered by Firebase's Realtime Database. Players can create a new game or join an existing game using a unique game code. Moves are synchronized across sessions in real time.
 
 ---
 
@@ -13,12 +13,12 @@ Pencil FE Assignment is a feature-rich Angular 16 application that simulates a c
 
 - [Features](#features)
 - [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Communication Model](#communication-model)
-- [Game State & Persistence](#game-state--persistence)
+- [Installation & Setup](#installation--setup)
+- [Firebase Integration](#firebase-integration)
+- [Running the Application](#running-the-application)
+- [Testing the Online Mode](#testing-the-online-mode)
 - [Deployment](#deployment)
+- [Debugging & Logs](#debugging--logs)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -26,28 +26,25 @@ Pencil FE Assignment is a feature-rich Angular 16 application that simulates a c
 
 ## Features
 
-- **Dual Iframe Setup:**  
-  Two iframes simulate a two-player chess match:
-  - **Player 1 (White):** Iframe1 is enabled by default.
-  - **Player 2 (Black):** Iframe2 is rotated for the correct perspective and disabled initially.
+- **Dual Mode Chess Game:**  
+  - **Offline Mode:** Two iframes are used—one for white and one for black. The main page mediates moves between the iframes via the `postMessage` API.
+  - **Online Mode:** A single-board view is synchronized via Firebase Realtime Database. Players can create a game (assigned white) or join an existing game (assigned black).
 
 - **Turn-Based Interaction:**  
-  Only the active player’s board is enabled. When one player makes a move, the parent toggles the turn and forwards the move to the other iframe.
+  The system enforces turns:
+  - The active board is enabled (with an overlay displayed on the inactive board).
+  - Moves are only accepted when it’s the player’s turn.
 
-- **Real-Time Move Synchronization:**  
-  Moves are captured via the postMessage API, processed by the parent, and forwarded to the opposite iframe in real time.
+- **Realtime Updates & Persistence:**  
+  - Moves are immediately synchronized using Firebase.
+  - Game state (FEN and current turn) is stored in local storage, allowing resumption of an unfinished game.
 
-- **Checkmate Detection:**  
-  The application detects checkmate and presents an alert with the winning player, offering a reset option to restart the game.
+- **Game Controls:**  
+  - **Reset Game:** A button resets the game to the starting position.
+  - **Leave Game:** A button lets the user exit the game, clearing local storage and local state.
 
-- **Game State Persistence:**  
-  The current game state (board position using FEN, current turn, etc.) is stored in LocalStorage so that the game can be resumed if the user closes the browser.
-
-- **Reset Game Functionality:**  
-  A reset button is provided to restart the game manually.
-
-- **Online Game Functionality:**  
-  _Not yet implemented._
+- **Responsive Debug Logging:**  
+  Detailed console logs help trace Firebase initialization, game state updates, and move validations.
 
 ---
 
@@ -55,43 +52,44 @@ Pencil FE Assignment is a feature-rich Angular 16 application that simulates a c
 
 ```
 pencil-fe-assignment/
-├── node_modules/                # Installed npm packages
-├── public/                      # Public assets (if any)
+├── node_modules/                
+├── public/                      # Static assets (e.g., favicon)
 ├── src/
 │   ├── app/
-│   │   ├── app.component.*      # Root component for overall layout and header
-│   │   ├── app.routes.ts        # Application routing configuration
-│   │   ├── mainpage/            # Main page container (parent window hosting iframes)
-│   │   │   ├── mainpage.component.ts
-│   │   │   ├── mainpage.component.html
-│   │   │   └── mainpage.component.css
-│   │   ├── iframepage/          # Iframe page component for chess boards
+│   │   ├── app.component.*      # Root component (layout, header)
+│   │   ├── app.module.ts        # NgModule configuration
+│   │   ├── app.routes.ts        # Application routes
+│   │   ├── iframepage/          # Offline mode iframe component
 │   │   │   ├── iframepage.component.ts
 │   │   │   ├── iframepage.component.html
 │   │   │   └── iframepage.component.css
-│   │   └── online-game/         # (Optional) Components for online mode (not implemented)
-│   ├── index.html               # Main HTML file
-│   ├── main.ts                  # Application bootstrap file
+│   │   ├── mainpage/            # Main page hosting iframes
+│   │   │   ├── mainpage.component.ts
+│   │   │   ├── mainpage.component.html
+│   │   │   └── mainpage.component.css
+│   │   └── online-game/         # Online game mode component
+│   │       ├── online-game.component.ts
+│   │       ├── online-game.component.html
+│   │       └── online-game.component.css
+│   ├── environments/
+│   │   ├── environment.ts       # Firebase config, etc.
+│   │   └── environment.prod.ts
+│   ├── index.html
+│   ├── main.ts                  # Application bootstrap with Firebase providers
 │   └── styles.css               # Global styles
-├── angular.json                 # Angular CLI configuration
-├── package.json                 # Project metadata and dependencies
-└── tsconfig.json                # TypeScript configuration
+├── angular.json
+├── package.json
+└── tsconfig.json
 ```
 
 ---
 
-## Getting Started
-
-This project requires [Node.js](https://nodejs.org/) and the [Angular CLI](https://angular.io/cli) to be installed on your machine.
-
----
-
-## Installation
+## Installation & Setup
 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/pencil-fe-assignment.git
+   git clone https://github.com/omarfarooq908/pencil-fe-assignment.git
    cd pencil-fe-assignment
    ```
 
@@ -109,54 +107,93 @@ This project requires [Node.js](https://nodejs.org/) and the [Angular CLI](https
 
 ---
 
-## Usage
+## Firebase Integration
 
-### Running the Application Locally
+1. **Set Up Firebase:**  
+   - Create a project in the [Firebase Console](https://console.firebase.google.com/).
+   - Enable Firebase Realtime Database (or Firestore if you later choose to use it).
 
-To serve the application locally, run:
+2. **Configure Firebase:**  
+   Copy your Firebase configuration from the Firebase Console and paste it into your `src/environments/environment.ts` file. For example:
+
+   ```typescript
+   export const environment = {
+     production: false,
+     firebaseConfig: {
+       apiKey: "[apikey]",
+       authDomain: "[authDomain]",
+       databaseURL: "[databaseURL]",
+       projectId: "[projectId]",
+       storageBucket: "[storageBucket]",
+       messagingSenderId: "[messagingSenderId]",
+       appId: "[appId]",
+       measurementId: "[measurementId]"
+     }
+   };
+   ```
+
+3. **Initialize Firebase:**  
+   In your `src/main.ts`, Firebase is initialized using AngularFire’s modular providers:
+
+   ```typescript
+   import { bootstrapApplication } from '@angular/platform-browser';
+   import { provideRouter } from '@angular/router';
+   import { importProvidersFrom } from '@angular/core';
+   import { BrowserModule } from '@angular/platform-browser';
+   import { NgxChessBoardModule } from 'ngx-chess-board';
+   import { AppComponent } from './app/app.component';
+   import { routes } from './app/app.routes';
+   import { environment } from './environments/environment';
+   import { provideFirebaseApp } from '@angular/fire/app';
+   import { initializeApp } from 'firebase/app';
+   import { getDatabase, provideDatabase } from '@angular/fire/database';
+
+   bootstrapApplication(AppComponent, {
+     providers: [
+       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+       provideDatabase(() => getDatabase()),
+       importProvidersFrom(BrowserModule, NgxChessBoardModule.forRoot()),
+       provideRouter(routes)
+     ]
+   }).catch(err => console.error(err));
+   ```
+
+---
+
+## Running the Application
+
+Run the development server:
 
 ```bash
 ng serve
 ```
 
-- Open your browser at `http://localhost:4200/mainpage` to view the main page.
-- The main page hosts two iframes:
-  - **Iframe1 (Player 1, White):** Enabled by default.
-  - **Iframe2 (Player 2, Black):** Rotated for proper perspective and disabled initially.
-- Moves made in one iframe are synchronized with the other via the postMessage API.
-- A reset button is available to restart the game.
+- The **Main Page** (`/mainpage`) hosts two iframes for offline play.
+- The **Online Game Mode** is available at `/online-game`.
 
 ---
 
-## Communication Model
+## Testing the Online Mode
 
-- **From Child to Parent:**  
-  When a move is made on a chess board, the IframepageComponent sends a move object (including FEN, PGN, and a `from` identifier) to the parent via `window.parent.postMessage`.
+1. **Simulate Two Players:**  
+   - Open one browser window (or tab) as the game creator (Player 1, white).
+   - Open a separate incognito window (or another browser) for the joining player (Player 2, black).
 
-- **Parent Processing:**  
-  The MainpageComponent listens for these messages, toggles the current turn, broadcasts a turn update message, and forwards the move to the opposite iframe. The game state is stored in LocalStorage.
+2. **Create a Game:**  
+   In the creator’s session, click "Create New Game." The game code will be generated and displayed.
 
-- **From Parent to Child:**  
-  Each IframepageComponent listens for turn updates and reset messages to update its state and board accordingly.
+3. **Join a Game:**  
+   In the other session, navigate to `/online-game`, enter the game code, and click "Join Game."
 
----
+4. **Gameplay:**  
+   - The board state (FEN and turn) is synchronized via Firebase.
+   - An overlay displays "Waiting for opponent..." on the inactive board.
+   - Debug logs in the console will show the current turn, playerColor, and move events.
 
-## Game State & Persistence
-
-- **Saving State:**  
-  After every move, the parent component saves the current game state (FEN and current turn) in LocalStorage.
-
-- **Loading State:**  
-  On startup, each IframepageComponent checks LocalStorage. If a saved game exists, it uses `setFEN(state.fen)` (and applies necessary board reversals) to restore the previous game state.
-
-- **Resetting State:**  
-  When a checkmate is detected or when the user clicks the reset button, the game state is cleared and the boards are reset.
-
----
 
 ## Contributing
 
-Contributions are welcome! If you find issues or have suggestions for improvement, please open an issue or submit a pull request.
+Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
 
 ---
 
@@ -166,9 +203,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-*Enjoy the game, and happy coding!*
-```
-
----
-
-Feel free to adjust the text and details to better match your project specifics.
+*Enjoy the game and happy coding!*
