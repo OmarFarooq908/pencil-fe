@@ -1,6 +1,6 @@
 .frames-container {
-    width: 100%;  /* or 90% or any percentage you prefer */
-    max-width: 1200px; /* sets an upper limit */
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     gap: 20px;
@@ -15,7 +15,7 @@
   
   .frame-wrapper {
     flex: 1;
-    text-align: center; /* center the title */
+    text-align: center;
   }
   
   .frame-wrapper iframe {

@@ -19,7 +19,6 @@
           #chessBoard
           (moveChange)="onMoveChange($event)">
         </ngx-chess-board>
-        <!-- Overlay is displayed when it's not your turn -->
         <div *ngIf="!isMyTurn" class="overlay">
           <p class="overlay-text">Waiting for opponent...</p>
         </div>

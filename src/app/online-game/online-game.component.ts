@@ -19,15 +19,12 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 export class OnlineGameComponent implements OnInit {
   @ViewChild('chessBoard', {static: false}) chessBoard!: NgxChessBoardView;
 
-  // Game state variables.
   gameCode: string = '';
   gameState$: Observable<any> | undefined;
   currentTurn: 'white' | 'black' = 'white';
-  playerColor: 'white' | 'black' = 'white'; // Creator is white by default.
+  playerColor: 'white' | 'black' = 'white'; 
   gameStarted: boolean = false;
   isMyTurn: boolean = false;
-
-  // Inject Database instance using getDatabase() after ensuring the Firebase app is initialized via main.ts
 
   db!: Database;
   constructor(
@@ -35,23 +32,16 @@ export class OnlineGameComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // const apps = getApps();
-    // if (apps.length === 0) {
-    //   initializeApp(environment.firebaseConfig);
-    //   console.log('Firebase app initialized in component');
-    // }
-    // this.db = getDatabase();
+    
     console.log('OnlineGameComponent constructor called.');
     console.log('isPlatformBrowser:', isPlatformBrowser(this.platformId));
     if (isPlatformBrowser(this.platformId)) {
-      // Check for existing Firebase apps
       const apps = getApps();
       console.log('Existing Firebase apps:', apps);
       if (apps.length === 0) {
         initializeApp(environment.firebaseConfig);
         console.log('Firebase app initialized in OnlineGameComponent constructor.');
       }
-      // Now get the database instance
       this.db = getDatabase();
       console.log('Database instance:', this.db);
     } else {
@@ -60,16 +50,8 @@ export class OnlineGameComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Optionally, resume a game if data is saved in localStorage.
+    
     if (isPlatformBrowser(this.platformId)) {
-      // // Ensure Firebase is initialized
-      // const apps = getApps();
-      // if (apps.length === 0) {
-      //   initializeApp(environment.firebaseConfig);
-      //   console.log('Firebase app intialized in OnlineGameComponent ngOnInit');
-      // }
-      // // Now initialize the database instance.
-      // this.db = getDatabase();
       const savedGame = localStorage.getItem('onlineGame');
       console.log('Saved game from localStorage:', savedGame);
       if (savedGame) {
@@ -85,11 +67,8 @@ export class OnlineGameComponent implements OnInit {
     }
   }
 
-  /**
-   * Creates a new game.
-   */
   createGame(): void {
-    // Push a new game node to Firebase with the initial state.
+    
     if (!isPlatformBrowser(this.platformId)) {
       console.error('Cannot create game: not running in a browser.');
       return;
@@ -103,7 +82,7 @@ export class OnlineGameComponent implements OnInit {
       console.log('Game node created in Firebase with ID:', newGameId);
     }).catch(err => console.error('Error creating game:', err));
     this.gameCode = gameRef.key as string;
-    this.playerColor = 'white'; // Creator is white.
+    this.playerColor = 'white'; 
     localStorage.setItem('onlineGame', JSON.stringify({ gameCode: this.gameCode, playerColor: this.playerColor }));
     console.log('Game created with code:', this.gameCode);
     this.subscribeToGame();
@@ -111,25 +90,19 @@ export class OnlineGameComponent implements OnInit {
     alert(`Game created! Share this game code with your friend: ${this.gameCode}`);
   }
 
-  /**
-   * Join an existing game by code.
-   */
   joinGame(code: string): void {
     if (!isPlatformBrowser(this.platformId)) {
       console.error('Cannot join game: not running in a browser.');
       return;
     }
     this.gameCode = code;
-    this.playerColor = 'black'; // Joining player is black.
+    this.playerColor = 'black'; 
     localStorage.setItem('onlineGame', JSON.stringify({ gameCode: this.gameCode, playerColor: this.playerColor }));
     console.log('Joined game with code:', this.gameCode, 'as player:', this.playerColor);
     this.subscribeToGame();
     this.gameStarted = true;
   }
 
-  /**
-   * Subscribes to changes in the game state from Firebase.
-   */
   subscribeToGame(): void {
     console.log('Subscribing to game state for gameCode:', this.gameCode);
     const gameRef = ref(this.db, `/games/${this.gameCode}`);
@@ -171,17 +144,17 @@ export class OnlineGameComponent implements OnInit {
       return;
     }
 
-    // Check if the move object includes a piece color.
+    
   if (move.color) {
     if (move.color !== this.playerColor) {
       console.warn(`Move color (${move.color}) does not match playerColor (${this.playerColor}). Move ignored.`);
       return;
     }
   } else {
-    // If move.color is not provided, log a warning.
+    
     console.warn('Move event does not include a color property.');
-    // Optionally: Implement additional logic here to determine the piece color,
-    // e.g. by parsing the current FEN or using another API.
+    
+    
   }
     const moveString = move.move || `${move.from}${move.to}`;
     console.log('Move made:', moveString);
@@ -199,10 +172,6 @@ export class OnlineGameComponent implements OnInit {
     });
   }
   
-
-  /**
-   * Resets the online game to its initial state.
-   */
   resetGame(): void {
     const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
     console.log('Resetting game to initial state with FEN:', initialFen);

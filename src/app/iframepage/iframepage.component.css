@@ -8,23 +8,20 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(200, 200, 200, 0.5); /* semi-transparent gray */
-    z-index: 9999;  /* very high z-index to ensure it's on top */
-    pointer-events: auto; /* ensures the overlay captures clicks */
+    background-color: rgba(200, 200, 200, 0.5);
+    z-index: 9999; 
+    pointer-events: auto;
   }
-  /* Rotate the entire board container when in frame2 */
+
 .rotate-board {
     transform: rotate(0deg);
   }
   
-  /* Counter-rotate the pieces so they appear upright */
-  .rotate-board .piece {
+.rotate-board .piece {
     transform: rotate(0deg);
   }
   
-  /* If the chess board library uses different selectors for the pieces,
-     adjust the selector accordingly. For example, it might be something like: */
-  .rotate-board .chess-piece {
+.rotate-board .chess-piece {
     transform: rotate(0deg);
   }
   

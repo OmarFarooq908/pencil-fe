@@ -22,12 +22,11 @@ import { routes } from './app.routes';
   ],
   imports: [
     BrowserModule,
-    NgxChessBoardModule.forRoot(), // <-- Import the chess board module here
+    NgxChessBoardModule.forRoot(),
     RouterModule.forRoot(routes),
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule // <-- Database module
+    AngularFireDatabaseModule
   ],
-  // Adding CUSTOM_ELEMENTS_SCHEMA can help if Angular still complains about unknown elements.
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })

@@ -2,7 +2,7 @@
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
-    pointer-events: all !important; /* Force it to capture all pointer events */
+    pointer-events: all !important;
   }
   
   .online-game-container button {
@@ -28,12 +28,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(200, 200, 200, 0.5); /* Semi-transparent gray */
-  z-index: 9999; /* Ensure overlay is on top */
+  background-color: rgba(200, 200, 200, 0.5);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: all !important; /* Force it to capture all pointer events */
+  pointer-events: all !important;
 }
 
 .overlay-text {
